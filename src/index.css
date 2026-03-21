@@ -39,7 +39,12 @@ h1, h2, h3, h4, .font-display {
 }
 
 .glass-card {
-  @apply bg-surface/30 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl transition-all duration-300;
+  @apply bg-white/[0.03] backdrop-blur-[16px] border border-white/10 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_0_rgba(99,102,241,0.15)] transition-all duration-500 hover:bg-white/[0.05];
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 8px 32px 0 rgba(0,0,0,0.3);
+}
+
+.glass-card:hover {
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 8px 32px 0 rgba(99,102,241,0.15);
 }
 
 .glass-nav {

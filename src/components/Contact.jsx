@@ -4,7 +4,7 @@ import { FaGithub, FaLinkedin, FaEnvelope, FaMapMarkerAlt, FaPaperPlane } from '
 
 const Contact = () => {
   return (
-    <section id='contact' className='relative bg-background'>
+    <section id='contact' className='relative bg-transparent'>
       {/* Background Radial Glow */}
       <div className='absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 blur-[150px] -z-10 select-none opacity-50' />
 

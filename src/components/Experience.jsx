@@ -37,7 +37,7 @@ const Experience = () => {
   ];
 
   return (
-    <section id='experience' className='relative min-h-screen bg-background'>
+    <section id='experience' className='relative min-h-screen bg-transparent'>
        <div className='absolute top-1/2 right-0 -translate-y-1/2 w-80 h-80 bg-accent-purple/5 blur-[120px] rounded-full -z-10' />
 
       <div className='max-w-[1440px] mx-auto'>

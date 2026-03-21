@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaPython, FaGithub, FaDatabase } from 'react-icons/fa';
+import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaPython, FaGithub, FaDatabase, FaExternalLinkAlt } from 'react-icons/fa';
 import { SiTailwindcss, SiMongodb, SiExpress, SiVite } from 'react-icons/si';
+import Tilt from 'react-parallax-tilt';
 
 const Skills = () => {
   const categories = [
@@ -53,7 +54,7 @@ const Skills = () => {
   };
 
   return (
-    <section id='skills' className='relative min-h-screen flex items-center bg-background'>
+    <section id='skills' className='relative min-h-screen flex items-center bg-transparent'>
       {/* Decorative Blur */}
       <div className='absolute bottom-0 right-0 w-96 h-96 bg-primary/5 blur-[120px] rounded-full -z-10' />
       
@@ -70,13 +71,22 @@ const Skills = () => {
 
         <div className='grid lg:grid-cols-3 gap-8'>
           {categories.map((category, catIdx) => (
-            <motion.div 
+            <Tilt 
               key={catIdx}
+              tiltMaxAngleX={5}
+              tiltMaxAngleY={5}
+              perspective={1000}
+              transitionSpeed={1000}
+              scale={1.02}
+              gyroscope={true}
+              className='h-full'
+            >
+            <motion.div 
               initial='hidden'
               whileInView='visible'
               viewport={{ once: true }}
               variants={containerVariants}
-              className='glass-card p-8 space-y-8'
+              className='glass-card p-8 space-y-8 h-full hover:shadow-[0_0_30px_rgba(99,102,241,0.2)] transition-shadow duration-300 hover:border-primary/50'
             >
               <h3 className='text-xl font-bold text-white border-b border-white/5 pb-4'>
                 {category.title}
@@ -104,14 +114,12 @@ const Skills = () => {
                 ))}
               </div>
             </motion.div>
+            </Tilt>
           ))}
         </div>
       </div>
     </section>
   );
 };
-
-// Add missing FaExternalLinkAlt for tools
-import { FaExternalLinkAlt } from 'react-icons/fa';
 
 export default Skills;

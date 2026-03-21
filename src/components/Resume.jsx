@@ -5,7 +5,7 @@ import resume from '../assets/resume.pdf';
 
 const Resume = () => {
   return (
-    <section id='resume' className='relative bg-background overflow-hidden'>
+    <section id='resume' className='relative bg-transparent overflow-hidden'>
       {/* Background Glow */}
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[150px] -z-10 rounded-full opacity-50' />
 

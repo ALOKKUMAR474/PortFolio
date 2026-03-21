@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import profileImage from "../assets/2image.jpg";
+import profileImage from "../assets/profile-pic.png";
+import Tilt from 'react-parallax-tilt';
 
 const About = () => {
   return (
@@ -16,7 +17,14 @@ const About = () => {
           className='relative group'
         >
           {/* Profile Image Frame */}
-          <div className='relative z-10 w-full max-w-[500px] mx-auto aspect-square rounded-2xl p-1 bg-gradient-to-br from-primary via-accent-purple to-accent-pink shadow-xl hover:scale-[1.05] transition-transform duration-500'>
+          <Tilt 
+             tiltMaxAngleX={10}
+             tiltMaxAngleY={10}
+             perspective={1000}
+             transitionSpeed={1000}
+             scale={1.02}
+             className='relative z-10 w-full max-w-[500px] mx-auto aspect-square rounded-2xl p-1 bg-gradient-to-br from-primary via-accent-purple to-accent-pink shadow-xl transition-all duration-500 hover:shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer'
+          >
             <div className='w-full h-full bg-slate-900 rounded-2xl flex items-center justify-center overflow-hidden relative'>
                <img 
                  src={profileImage} 
@@ -24,12 +32,12 @@ const About = () => {
                  className="w-full h-full object-cover rounded-2xl"
                />
                <div className='absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none z-10' />
-               <div className='absolute bottom-8 left-8 text-left z-20'>
+               <div className='absolute bottom-8 left-8 text-left z-20 pointer-events-none'>
                   <p className='text-sm font-bold text-primary uppercase tracking-widest mb-1'>Based In</p>
                   <p className='text-xl font-bold text-white'>Chandigarh, India</p>
                </div>
             </div>
-          </div>
+          </Tilt>
           
           {/* Decorative Elements */}
           <div className='absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-primary/30 rounded-tl-3xl z-0' />

@@ -10,7 +10,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className='relative bg-background pt-10 pb-20 border-t border-white/5'>
+    <footer className='relative bg-transparent pt-10 pb-20 border-t border-white/5'>
       <div className='max-w-[1440px] mx-auto px-6 flex flex-col items-center gap-12'>
         
         {/* Scroll Top Button */}

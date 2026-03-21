@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-scroll';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaEnvelope, FaChevronDown } from 'react-icons/fa';
-import profilePic from "../assets/profile-pic.png"
+import Hero3D from './Hero3D';
 
 const Hero = () => {
   return (
-    <div id='home' className='relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background'>
+    <div id='home' className='relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-transparent'>
       {/* Dynamic Background Elements */}
       <div className='absolute inset-0 z-0'>
         <div className='absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.1),transparent_50%)]' />
@@ -131,19 +131,14 @@ const Hero = () => {
                 className='absolute -inset-4 bg-gradient-to-tr from-primary via-accent-purple to-accent-pink rounded-full opacity-40 blur-sm group-hover:opacity-70 transition-opacity duration-500'
               />
               
-              {/* Image Container */}
+              {/* 3D Canvas Container */}
               <motion.div 
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 whileHover={{ scale: 1.05 }}
-                className='relative w-64 h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px] rounded-full overflow-hidden border-4 border-white/10 shadow-2xl z-10'
+                className='relative w-64 h-64 md:w-80 md:h-80 lg:w-[450px] lg:h-[450px] rounded-full overflow-hidden border-4 border-white/10 shadow-[0_0_50px_rgba(99,102,241,0.5)] z-10 bg-black/20 backdrop-blur-sm group-hover:shadow-[0_0_80px_rgba(168,85,247,0.6)] transition-shadow duration-500'
               >
-                <img 
-                  src={profilePic} 
-                  alt='Alok Kumar' 
-                  className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'
-                />
-                <div className='absolute inset-0 bg-gradient-to-t from-background/40 to-transparent' />
+                <Hero3D />
               </motion.div>
 
               {/* Decorative Floating Element */}

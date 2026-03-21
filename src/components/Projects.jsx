@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
+import Tilt from 'react-parallax-tilt';
 
 const Projects = () => {
   const projects = [
@@ -21,11 +22,20 @@ const Projects = () => {
       github: 'https://github.com/ALOKKUMAR474',
       demo: '#',
       image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800'
+    },
+    {
+      title: 'FinanceFlow',
+      subtitle: 'Smart Personal Finance Tracker',
+      description: 'A comprehensive personal finance management app featuring secure JWT authentication, an automatic 50-30-20 budget planner, and interactive Recharts dashboards.',
+      tech: ['React', 'Node.js', 'Express.js', 'MongoDB', 'Tailwind CSS'],
+      github: 'https://github.com/ALOKKUMAR474/FinanceFlow',
+      demo: '#',
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800'
     }
   ];
 
   return (
-    <section id='projects' className='relative bg-background'>
+    <section id='projects' className='relative bg-transparent'>
       {/* Background Accent */}
       <div className='absolute top-0 right-0 w-full h-[500px] bg-primary/5 blur-[120px] -z-10 opacity-30 select-none' />
       
@@ -53,8 +63,17 @@ const Projects = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.2 }}
-              className='glass-card group flex flex-col h-full hover:border-primary/30'
+              className='h-full'
             >
+              <Tilt
+                tiltMaxAngleX={10}
+                tiltMaxAngleY={10}
+                perspective={1000}
+                transitionSpeed={1000}
+                scale={1.02}
+                gyroscope={true}
+                className='glass-card group flex flex-col h-full hover:border-primary/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.2)] transition-shadow duration-300'
+              >
               {/* Image Container */}
               <div className='relative aspect-video rounded-t-2xl overflow-hidden'>
                 <img 
@@ -116,6 +135,7 @@ const Projects = () => {
                   </a>
                 </div>
               </div>
+              </Tilt>
             </motion.div>
           ))}
         </div>
