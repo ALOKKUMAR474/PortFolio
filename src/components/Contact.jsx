@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaEnvelope, FaMapMarkerAlt, FaPaperPlane } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaEnvelope, FaMapMarkerAlt, FaPaperPlane, FaPhoneAlt } from 'react-icons/fa';
 
 const Contact = () => {
   return (
@@ -39,6 +39,7 @@ const Contact = () => {
             <div className='space-y-8'>
               {[
                 { icon: <FaEnvelope />, title: 'Email Me', value: 'alokkumarrajawat47@gmail.com', href: 'mailto:alokkumarrajawat47@gmail.com' },
+                { icon: <FaPhoneAlt />, title: 'Phone', value: '+91 8603725055', href: 'tel:+918603725055' },
                 { icon: <FaLinkedin />, title: 'LinkedIn', value: 'alok-kumar-901727291', href: 'https://linkedin.com/in/alok-kumar-901727291' },
                 { icon: <FaMapMarkerAlt />, title: 'Location', value: 'Chandigarh, India', href: '#' }
               ].map((item, i) => (
