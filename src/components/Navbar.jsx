@@ -3,7 +3,7 @@ import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import resume from '../assets/resume.pdf';
 
-const Navbar = ({ activeSection, setActiveSection }) => {
+const Navbar = ({ activeSection, setActiveSection, isMobile }) => {
   const [nav, setNav] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
