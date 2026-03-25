@@ -577,6 +577,10 @@ video {
   bottom: 2.5rem;
 }
 
+.bottom-12{
+  bottom: 3rem;
+}
+
 .bottom-8{
   bottom: 2rem;
 }
@@ -623,6 +627,10 @@ video {
 
 .top-\[-10\%\]{
   top: -10%;
+}
+
+.top-\[20\%\]{
+  top: 20%;
 }
 
 .-z-10{
@@ -1264,8 +1272,8 @@ video {
   border-color: rgb(168 85 247 / 0.3);
 }
 
-.border-blue-500\/30{
-  border-color: rgb(59 130 246 / 0.3);
+.border-blue-500\/20{
+  border-color: rgb(59 130 246 / 0.2);
 }
 
 .border-primary\/20{
@@ -1345,6 +1353,10 @@ video {
   background-color: rgb(15 23 42 / var(--tw-bg-opacity, 1));
 }
 
+.bg-slate-900\/40{
+  background-color: rgb(15 23 42 / 0.4);
+}
+
 .bg-slate-900\/50{
   background-color: rgb(15 23 42 / 0.5);
 }
@@ -1421,6 +1433,11 @@ video {
 .via-accent-purple{
   --tw-gradient-to: rgb(168 85 247 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), #a855f7 var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+
+.via-indigo-500{
+  --tw-gradient-to: rgb(99 102 241 / 0)  var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), #6366f1 var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
 
 .via-transparent{
@@ -1513,6 +1530,11 @@ video {
   padding-bottom: 0.5rem;
 }
 
+.py-3{
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
 .py-4{
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -1584,6 +1606,11 @@ video {
 
 .text-\[10px\]{
   font-size: 10px;
+}
+
+.text-base{
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 .text-lg{
@@ -1850,6 +1877,11 @@ video {
   --tw-shadow: var(--tw-shadow-colored);
 }
 
+.shadow-blue-500\/10{
+  --tw-shadow-color: rgb(59 130 246 / 0.1);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
 .shadow-primary\/30{
   --tw-shadow-color: rgb(99 102 241 / 0.3);
   --tw-shadow: var(--tw-shadow-colored);
@@ -1887,6 +1919,11 @@ video {
 
 .blur-sm{
   --tw-blur: blur(4px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.drop-shadow-2xl{
+  --tw-drop-shadow: drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
@@ -2455,6 +2492,16 @@ section{
   .sm\:px-8{
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .sm\:text-5xl{
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  .sm\:text-lg{
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 }
 

@@ -17241,7 +17241,7 @@ function _setViewport(target, x, y2, width, height) {
 function _getBlurShader(lodMax, width, height) {
   const weights = new Float32Array(MAX_SAMPLES);
   const poleAxis = new Vector3(0, 1, 0);
-  const shaderMaterial = new ShaderMaterial({
+  const shaderMaterial2 = new ShaderMaterial({
     name: "SphericalGaussianBlur",
     defines: {
       "n": MAX_SAMPLES,
@@ -17327,7 +17327,7 @@ function _getBlurShader(lodMax, width, height) {
     depthTest: false,
     depthWrite: false
   });
-  return shaderMaterial;
+  return shaderMaterial2;
 }
 function _getEquirectMaterial() {
   return new ShaderMaterial({
@@ -45278,7 +45278,7 @@ function mergeRefs(refs) {
     });
   };
 }
-const version = /* @__PURE__ */ (() => parseInt(REVISION.replace(/\D+/g, "")))();
+const version$1 = /* @__PURE__ */ (() => parseInt(REVISION.replace(/\D+/g, "")))();
 var u8 = Uint8Array, u16 = Uint16Array, u32 = Uint32Array;
 var fleb = new u8([
   0,
@@ -45706,7 +45706,7 @@ class GroundProjectedEnv extends Mesh {
             #endif
             gl_FragColor = vec4( outcolor, 1.0 );
             #include <tonemapping_fragment>
-            #include <${version >= 154 ? "colorspace_fragment" : "encodings_fragment"}>
+            #include <${version$1 >= 154 ? "colorspace_fragment" : "encodings_fragment"}>
         }
         `;
     const uniforms = {
@@ -46066,7 +46066,7 @@ class RGBELoader extends DataTextureLoader {
     return super.load(url, onLoadCallback, onProgress, onError);
   }
 }
-const hasColorSpace = version >= 152;
+const hasColorSpace = version$1 >= 152;
 class EXRLoader extends DataTextureLoader {
   constructor(manager) {
     super(manager);
@@ -52523,6 +52523,38 @@ const Text2 = /* @__PURE__ */ reactExports.forwardRef(({
     sdfGlyphSize
   }, props), nodes);
 });
+function shaderMaterial(uniforms, vertexShader, fragmentShader, onInit) {
+  const material = class material extends ShaderMaterial {
+    constructor(parameters = {}) {
+      const entries = Object.entries(uniforms);
+      super({
+        uniforms: entries.reduce((acc, [name, value]) => {
+          const uniform = UniformsUtils.clone({
+            [name]: {
+              value
+            }
+          });
+          return {
+            ...acc,
+            ...uniform
+          };
+        }, {}),
+        vertexShader,
+        fragmentShader
+      });
+      this.key = "";
+      entries.forEach(([name]) => Object.defineProperty(this, name, {
+        get: () => this.uniforms[name].value,
+        set: (v2) => this.uniforms[name].value = v2
+      }));
+      Object.assign(this, parameters);
+    }
+  };
+  material.key = MathUtils.generateUUID();
+  return material;
+}
+const getVersion = () => parseInt(REVISION.replace(/\D+/g, ""));
+const version = /* @__PURE__ */ getVersion();
 var propTypes = { exports: {} };
 var ReactPropTypesSecret$1 = "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED";
 var ReactPropTypesSecret_1 = ReactPropTypesSecret$1;
@@ -52947,12 +52979,244 @@ const ContactShadows = /* @__PURE__ */ reactExports.forwardRef(({
     args: [-width / 2, width / 2, height / 2, -height / 2, near, far]
   }));
 });
-const InteractiveTerminal = ({ position, rotation, label, sectionKey, activeSection, setActiveSection, color: color2 }) => {
+class StarfieldMaterial extends ShaderMaterial {
+  constructor() {
+    super({
+      uniforms: {
+        time: {
+          value: 0
+        },
+        fade: {
+          value: 1
+        }
+      },
+      vertexShader: (
+        /* glsl */
+        `
+      uniform float time;
+      attribute float size;
+      varying vec3 vColor;
+      void main() {
+        vColor = color;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 0.5);
+        gl_PointSize = size * (30.0 / -mvPosition.z) * (3.0 + sin(time + 100.0));
+        gl_Position = projectionMatrix * mvPosition;
+      }`
+      ),
+      fragmentShader: (
+        /* glsl */
+        `
+      uniform sampler2D pointTexture;
+      uniform float fade;
+      varying vec3 vColor;
+      void main() {
+        float opacity = 1.0;
+        if (fade == 1.0) {
+          float d = distance(gl_PointCoord, vec2(0.5, 0.5));
+          opacity = 1.0 / (1.0 + exp(16.0 * (d - 0.25)));
+        }
+        gl_FragColor = vec4(vColor, opacity);
+
+        #include <tonemapping_fragment>
+	      #include <${version >= 154 ? "colorspace_fragment" : "encodings_fragment"}>
+      }`
+      )
+    });
+  }
+}
+const genStar = (r2) => {
+  return new Vector3().setFromSpherical(new Spherical(r2, Math.acos(1 - Math.random() * 2), Math.random() * 2 * Math.PI));
+};
+const Stars = /* @__PURE__ */ reactExports.forwardRef(({
+  radius = 100,
+  depth = 50,
+  count = 5e3,
+  saturation = 0,
+  factor = 4,
+  fade = false,
+  speed = 1
+}, ref) => {
+  const material = reactExports.useRef();
+  const [position, color2, size] = reactExports.useMemo(() => {
+    const positions = [];
+    const colors = [];
+    const sizes = Array.from({
+      length: count
+    }, () => (0.5 + 0.5 * Math.random()) * factor);
+    const color3 = new Color();
+    let r2 = radius + depth;
+    const increment = depth / count;
+    for (let i2 = 0; i2 < count; i2++) {
+      r2 -= increment * Math.random();
+      positions.push(...genStar(r2).toArray());
+      color3.setHSL(i2 / count, saturation, 0.9);
+      colors.push(color3.r, color3.g, color3.b);
+    }
+    return [new Float32Array(positions), new Float32Array(colors), new Float32Array(sizes)];
+  }, [count, depth, factor, radius, saturation]);
+  useFrame((state) => material.current && (material.current.uniforms.time.value = state.clock.getElapsedTime() * speed));
+  const [starfieldMaterial] = reactExports.useState(() => new StarfieldMaterial());
+  return /* @__PURE__ */ reactExports.createElement("points", {
+    ref
+  }, /* @__PURE__ */ reactExports.createElement("bufferGeometry", null, /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-position",
+    args: [position, 3]
+  }), /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-color",
+    args: [color2, 3]
+  }), /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-size",
+    args: [size, 1]
+  })), /* @__PURE__ */ reactExports.createElement("primitive", {
+    ref: material,
+    object: starfieldMaterial,
+    attach: "material",
+    blending: AdditiveBlending,
+    "uniforms-fade-value": fade,
+    depthWrite: false,
+    transparent: true,
+    vertexColors: true
+  }));
+});
+const SparklesImplMaterial = /* @__PURE__ */ shaderMaterial({
+  time: 0,
+  pixelRatio: 1
+}, ` uniform float pixelRatio;
+    uniform float time;
+    attribute float size;  
+    attribute float speed;  
+    attribute float opacity;
+    attribute vec3 noise;
+    attribute vec3 color;
+    varying vec3 vColor;
+    varying float vOpacity;
+    void main() {
+      vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+      modelPosition.y += sin(time * speed + modelPosition.x * noise.x * 100.0) * 0.2;
+      modelPosition.z += cos(time * speed + modelPosition.x * noise.y * 100.0) * 0.2;
+      modelPosition.x += cos(time * speed + modelPosition.x * noise.z * 100.0) * 0.2;
+      vec4 viewPosition = viewMatrix * modelPosition;
+      vec4 projectionPostion = projectionMatrix * viewPosition;
+      gl_Position = projectionPostion;
+      gl_PointSize = size * 25. * pixelRatio;
+      gl_PointSize *= (1.0 / - viewPosition.z);
+      vColor = color;
+      vOpacity = opacity;
+    }`, ` varying vec3 vColor;
+    varying float vOpacity;
+    void main() {
+      float distanceToCenter = distance(gl_PointCoord, vec2(0.5));
+      float strength = 0.05 / distanceToCenter - 0.1;
+      gl_FragColor = vec4(vColor, strength * vOpacity);
+      #include <tonemapping_fragment>
+      #include <${version >= 154 ? "colorspace_fragment" : "encodings_fragment"}>
+    }`);
+const isFloat32Array = (def) => def && def.constructor === Float32Array;
+const expandColor = (v2) => [v2.r, v2.g, v2.b];
+const isVector = (v2) => v2 instanceof Vector2 || v2 instanceof Vector3 || v2 instanceof Vector4;
+const normalizeVector = (v2) => {
+  if (Array.isArray(v2)) return v2;
+  else if (isVector(v2)) return v2.toArray();
+  return [v2, v2, v2];
+};
+function usePropAsIsOrAsAttribute(count, prop, setDefault) {
+  return reactExports.useMemo(() => {
+    if (prop !== void 0) {
+      if (isFloat32Array(prop)) {
+        return prop;
+      } else {
+        if (prop instanceof Color) {
+          const a2 = Array.from({
+            length: count * 3
+          }, () => expandColor(prop)).flat();
+          return Float32Array.from(a2);
+        } else if (isVector(prop) || Array.isArray(prop)) {
+          const a2 = Array.from({
+            length: count * 3
+          }, () => normalizeVector(prop)).flat();
+          return Float32Array.from(a2);
+        }
+        return Float32Array.from({
+          length: count
+        }, () => prop);
+      }
+    }
+    return Float32Array.from({
+      length: count
+    }, setDefault);
+  }, [prop]);
+}
+const Sparkles = /* @__PURE__ */ reactExports.forwardRef(({
+  noise = 1,
+  count = 100,
+  speed = 1,
+  opacity = 1,
+  scale: scale2 = 1,
+  size,
+  color: color2,
+  children,
+  ...props
+}, forwardRef) => {
+  reactExports.useMemo(() => extend({
+    SparklesImplMaterial
+  }), []);
+  const ref = reactExports.useRef(null);
+  const dpr = useThree((state) => state.viewport.dpr);
+  const _scale2 = normalizeVector(scale2);
+  const positions = reactExports.useMemo(() => Float32Array.from(Array.from({
+    length: count
+  }, () => _scale2.map(MathUtils.randFloatSpread)).flat()), [count, ..._scale2]);
+  const sizes = usePropAsIsOrAsAttribute(count, size, Math.random);
+  const opacities = usePropAsIsOrAsAttribute(count, opacity);
+  const speeds = usePropAsIsOrAsAttribute(count, speed);
+  const noises = usePropAsIsOrAsAttribute(count * 3, noise);
+  const colors = usePropAsIsOrAsAttribute(color2 === void 0 ? count * 3 : count, !isFloat32Array(color2) ? new Color(color2) : color2, () => 1);
+  useFrame((state) => {
+    if (ref.current && ref.current.material) ref.current.material.time = state.clock.elapsedTime;
+  });
+  reactExports.useImperativeHandle(forwardRef, () => ref.current, []);
+  return /* @__PURE__ */ reactExports.createElement("points", _extends$7({
+    key: `particle-${count}-${JSON.stringify(scale2)}`
+  }, props, {
+    ref
+  }), /* @__PURE__ */ reactExports.createElement("bufferGeometry", null, /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-position",
+    args: [positions, 3]
+  }), /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-size",
+    args: [sizes, 1]
+  }), /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-opacity",
+    args: [opacities, 1]
+  }), /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-speed",
+    args: [speeds, 1]
+  }), /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-color",
+    args: [colors, 3]
+  }), /* @__PURE__ */ reactExports.createElement("bufferAttribute", {
+    attach: "attributes-noise",
+    args: [noises, 3]
+  })), children ? children : /* @__PURE__ */ reactExports.createElement("sparklesImplMaterial", {
+    transparent: true,
+    pixelRatio: dpr,
+    depthWrite: false
+  }));
+});
+const InteractiveObject = ({ position, rotation, label, sectionKey, activeSection, setActiveSection, color: color2, type }) => {
   const isActive = activeSection === sectionKey;
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("group", { position, rotation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Float, { speed: 2, rotationIntensity: 0.2, floatIntensity: 0.5, children: [
+  const meshRef = reactExports.useRef();
+  useFrame((state, delta) => {
+    if (!isActive && meshRef.current) {
+      meshRef.current.rotation.x += delta * 0.2;
+      meshRef.current.rotation.y += delta * 0.3;
+    }
+  });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("group", { position, rotation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Float, { speed: isActive ? 1 : 3, rotationIntensity: isActive ? 0.1 : 0.8, floatIntensity: isActive ? 0.2 : 1, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "mesh",
       {
+        ref: meshRef,
         onClick: (e) => {
           e.stopPropagation();
           setActiveSection(isActive ? "home" : sectionKey);
@@ -52961,76 +53225,105 @@ const InteractiveTerminal = ({ position, rotation, label, sectionKey, activeSect
         onPointerOut: () => document.body.style.cursor = "auto",
         castShadow: true,
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("boxGeometry", { args: [2, 1.2, 0.2] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("meshStandardMaterial", { color: isActive ? color2 : "#1e1e24", metalness: 0.8, roughness: 0.2, emissive: isActive ? color2 : "#000", emissiveIntensity: isActive ? 0.5 : 0 })
+          type === "about" && /* @__PURE__ */ jsxRuntimeExports.jsx("icosahedronGeometry", { args: [1, 0] }),
+          type === "skills" && /* @__PURE__ */ jsxRuntimeExports.jsx("torusKnotGeometry", { args: [0.6, 0.2, 100, 16] }),
+          type === "projects" && /* @__PURE__ */ jsxRuntimeExports.jsx("octahedronGeometry", { args: [1, 0] }),
+          type === "experience" && /* @__PURE__ */ jsxRuntimeExports.jsx("dodecahedronGeometry", { args: [1, 0] }),
+          type === "resume" && /* @__PURE__ */ jsxRuntimeExports.jsx("coneGeometry", { args: [1, 1.5, 4] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "meshStandardMaterial",
+            {
+              color: isActive ? color2 : "#1e1e24",
+              metalness: 0.9,
+              roughness: 0.1,
+              emissive: color2,
+              emissiveIntensity: isActive ? 0.8 : 0.2,
+              wireframe: isActive
+            }
+          )
         ]
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       Text2,
       {
-        position: [0, 0, 0.11],
-        fontSize: 0.2,
-        color: "white",
+        position: [0, -1.5, 0],
+        fontSize: 0.25,
+        color: color2,
         anchorX: "center",
         anchorY: "middle",
+        outlineWidth: 0.02,
+        outlineColor: "#000",
         children: label
       }
     )
   ] }) });
 };
 const Scene3D = ({ activeSection, setActiveSection }) => {
-  const { camera } = useThree();
+  const { camera, viewport } = useThree();
+  const isMobile = viewport.width < 5;
+  const spacing = isMobile ? 1.2 : 2;
   useFrame((state, delta) => {
-    let targetPos = new Vector3(0, 2, 8);
+    const baseZ = isMobile ? 10 : 8;
+    let targetPos = new Vector3(0, 2, baseZ);
     let targetLookAt = new Vector3(0, 1, 0);
     if (activeSection === "about") {
-      targetPos.set(-3, 1.5, 3);
-      targetLookAt.set(-3, 1, 0);
+      targetPos.set(-spacing * 2, 1.5, baseZ - 5);
+      targetLookAt.set(-spacing * 2, 1, 0);
     } else if (activeSection === "skills") {
-      targetPos.set(-1, 1.5, 3);
-      targetLookAt.set(-1, 1, 0);
+      targetPos.set(-spacing, 1.5, baseZ - 5);
+      targetLookAt.set(-spacing, 1, 0);
     } else if (activeSection === "projects") {
-      targetPos.set(1, 1.5, 3);
-      targetLookAt.set(1, 1, 0);
-    } else if (activeSection === "experience" || activeSection === "resume") {
-      targetPos.set(3, 1.5, 3);
-      targetLookAt.set(3, 1, 0);
+      targetPos.set(0, 1.5, baseZ - 5);
+      targetLookAt.set(0, 1, 0);
+    } else if (activeSection === "experience") {
+      targetPos.set(spacing, 1.5, baseZ - 5);
+      targetLookAt.set(spacing, 1, 0);
+    } else if (activeSection === "resume") {
+      targetPos.set(spacing * 2, 1.5, baseZ - 5);
+      targetLookAt.set(spacing * 2, 1, 0);
     } else if (activeSection === "contact") {
-      targetPos.set(0, 3, 4);
-      targetLookAt.set(0, 0, 0);
+      targetPos.set(0, 4, baseZ - 3);
+      targetLookAt.set(0, 2, 0);
     }
     camera.position.lerp(targetPos, delta * 3);
   });
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("color", { attach: "background", args: ["#05050f"] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("ambientLight", { intensity: 0.5 }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("spotLight", { position: [10, 10, 10], angle: 0.15, penumbra: 1, intensity: 2, castShadow: true }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Environment, { preset: "city" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("color", { attach: "background", args: ["#030014"] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("ambientLight", { intensity: 0.2 }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("spotLight", { position: [10, 20, 10], angle: 0.15, penumbra: 1, intensity: 2, castShadow: true, color: "#4338ca" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("spotLight", { position: [-10, 20, -10], angle: 0.15, penumbra: 1, intensity: 2, castShadow: true, color: "#ec4899" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Environment, { preset: "night" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Stars, { radius: 100, depth: 50, count: 5e3, factor: 4, saturation: 0, fade: true, speed: 1 }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { count: 200, scale: 12, size: 2, speed: 0.4, opacity: 0.5, color: "#60a5fa" }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("mesh", { rotation: [-Math.PI / 2, 0, 0], position: [0, -1, 0], receiveShadow: true, children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("planeGeometry", { args: [50, 50] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("meshStandardMaterial", { color: "#0a0a1a", metalness: 0.5, roughness: 0.8 })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("planeGeometry", { args: [100, 100] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("meshStandardMaterial", { color: "#050510", metalness: 0.8, roughness: 0.2 })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveTerminal, { position: [-3, 1, 0], rotation: [0, 0.2, 0], label: "ABOUT", sectionKey: "about", activeSection, setActiveSection, color: "#3b82f6" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveTerminal, { position: [-1, 1, 0], rotation: [0, 0.1, 0], label: "SKILLS", sectionKey: "skills", activeSection, setActiveSection, color: "#8b5cf6" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveTerminal, { position: [1, 1, 0], rotation: [0, -0.1, 0], label: "PROJECTS", sectionKey: "projects", activeSection, setActiveSection, color: "#10b981" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveTerminal, { position: [3, 1, 0], rotation: [0, -0.2, 0], label: "RESUME", sectionKey: "resume", activeSection, setActiveSection, color: "#f59e0b" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Float, { speed: 3, rotationIntensity: 1, floatIntensity: 2, position: [0, 2, -3], children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "mesh",
-      {
-        onClick: (e) => {
-          e.stopPropagation();
-          setActiveSection("contact");
-        },
-        onPointerOver: () => document.body.style.cursor = "pointer",
-        onPointerOut: () => document.body.style.cursor = "auto",
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("sphereGeometry", { args: [1, 64, 64] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(MeshDistortMaterial, { color: "#ef4444", attach: "material", distort: 0.5, speed: 2, roughness: 0.2, metalness: 0.8 })
-        ]
-      }
-    ) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(ContactShadows, { position: [0, -0.99, 0], opacity: 0.4, scale: 20, blur: 2, far: 4 })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveObject, { type: "about", position: [-spacing * 2, 1, 0], rotation: [0, 0.2, 0], label: "ABOUT", sectionKey: "about", activeSection, setActiveSection, color: "#3b82f6" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveObject, { type: "skills", position: [-spacing, 1, 0], rotation: [0, 0.1, 0], label: "SKILLS", sectionKey: "skills", activeSection, setActiveSection, color: "#8b5cf6" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveObject, { type: "projects", position: [0, 1, 0], rotation: [0, 0, 0], label: "PROJECTS", sectionKey: "projects", activeSection, setActiveSection, color: "#10b981" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveObject, { type: "experience", position: [spacing, 1, 0], rotation: [0, -0.1, 0], label: "EXPERIENCE", sectionKey: "experience", activeSection, setActiveSection, color: "#f97316" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InteractiveObject, { type: "resume", position: [spacing * 2, 1, 0], rotation: [0, -0.2, 0], label: "RESUME", sectionKey: "resume", activeSection, setActiveSection, color: "#f59e0b" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(Float, { speed: 2, rotationIntensity: 2, floatIntensity: 3, position: [0, 3.5, -4], children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "mesh",
+        {
+          onClick: (e) => {
+            e.stopPropagation();
+            setActiveSection("contact");
+          },
+          onPointerOver: () => document.body.style.cursor = "pointer",
+          onPointerOut: () => document.body.style.cursor = "auto",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("sphereGeometry", { args: [1.5, 64, 64] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(MeshDistortMaterial, { color: "#e11d48", attach: "material", distort: 0.6, speed: 3, roughness: 0.1, metalness: 0.9 })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Text2, { position: [0, -2.5, 0], fontSize: 0.3, color: "#f43f5e", anchorX: "center", anchorY: "middle", outlineWidth: 0.02, outlineColor: "#000", children: "CONTACT" })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(ContactShadows, { position: [0, -0.99, 0], opacity: 0.6, scale: 40, blur: 2.5, far: 4, color: "#000" })
   ] });
 };
 var DefaultContext = {
@@ -63226,23 +63519,64 @@ const HUD = ({ activeSection, setActiveSection }) => {
     }
   );
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 relative w-full h-full pointer-events-none", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(AnimatePresence, { mode: "wait", children: [
-    activeSection === "home" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+    activeSection === "home" && /* @__PURE__ */ jsxRuntimeExports.jsxs(
       motion.div,
       {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-        className: "absolute bottom-10 left-0 w-full flex justify-center items-center flex-col pointer-events-none",
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm uppercase tracking-[0.3em] text-blue-400 animate-pulse bg-slate-900/50 px-4 py-2 rounded-full border border-blue-500/30 backdrop-blur-md", children: "Select an object to explore" })
+        initial: { opacity: 0, scale: 0.9 },
+        animate: { opacity: 1, scale: 1 },
+        exit: { opacity: 0, scale: 1.1 },
+        transition: { duration: 0.8, ease: "easeOut" },
+        className: "absolute inset-0 flex justify-center items-center flex-col pointer-events-none z-0",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "absolute top-[20%] text-center px-4 w-full", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              motion.h1,
+              {
+                initial: { opacity: 0, y: 30 },
+                animate: { opacity: 1, y: 0 },
+                transition: { duration: 0.8, delay: 0.2 },
+                className: "text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-extrabold tracking-tight leading-tight mb-4 drop-shadow-2xl",
+                children: [
+                  "Building ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 animate-gradient-x", children: "Digital" }),
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("br", {}),
+                  "Experiences"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              motion.p,
+              {
+                initial: { opacity: 0, y: 20 },
+                animate: { opacity: 1, y: 0 },
+                transition: { duration: 0.8, delay: 0.4 },
+                className: "text-base sm:text-lg md:text-2xl text-slate-300 max-w-2xl mx-auto font-medium",
+                children: [
+                  "Welcome to the 3D Portfolio of ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-white font-bold", children: "Alok Kumar" })
+                ]
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            motion.div,
+            {
+              initial: { opacity: 0 },
+              animate: { opacity: 1 },
+              transition: { delay: 1.5, duration: 1 },
+              className: "absolute bottom-12",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm uppercase tracking-[0.3em] text-blue-400 animate-pulse bg-slate-900/40 px-6 py-3 rounded-full border border-blue-500/20 backdrop-blur-md shadow-lg shadow-blue-500/10", children: "Click any floating object to explore" })
+            }
+          )
+        ]
       }
     ),
     activeSection === "about" && /* @__PURE__ */ jsxRuntimeExports.jsx(HUDWrapper, { sectionTitle: "About Me", children: /* @__PURE__ */ jsxRuntimeExports.jsx(About, { minimal: true }) }, "about"),
     activeSection === "skills" && /* @__PURE__ */ jsxRuntimeExports.jsx(HUDWrapper, { sectionTitle: "Skills & Tech", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Skills, { minimal: true }) }, "skills"),
     activeSection === "projects" && /* @__PURE__ */ jsxRuntimeExports.jsx(HUDWrapper, { sectionTitle: "Projects", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Projects, { minimal: true }) }, "projects"),
-    activeSection === "resume" && /* @__PURE__ */ jsxRuntimeExports.jsx(HUDWrapper, { sectionTitle: "Experience & Resume", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-12", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Experience, { minimal: true }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Resume, { minimal: true })
-    ] }) }, "resume"),
+    activeSection === "experience" && /* @__PURE__ */ jsxRuntimeExports.jsx(HUDWrapper, { sectionTitle: "Experience", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Experience, { minimal: true }) }, "experience"),
+    activeSection === "resume" && /* @__PURE__ */ jsxRuntimeExports.jsx(HUDWrapper, { sectionTitle: "Resume", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Resume, { minimal: true }) }, "resume"),
     activeSection === "contact" && /* @__PURE__ */ jsxRuntimeExports.jsx(HUDWrapper, { sectionTitle: "Contact", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Contact, { minimal: true }) }, "contact")
   ] }) });
 };

@@ -49,12 +49,12 @@ const HUD = ({ activeSection, setActiveSection }) => {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="absolute inset-0 flex justify-center items-center flex-col pointer-events-none z-0"
           >
-            <div className="absolute top-[20%] text-center">
+            <div className="absolute top-[20%] text-center px-4 w-full">
               <motion.h1 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-5xl md:text-7xl lg:text-8xl font-display font-extrabold tracking-tight leading-tight mb-4 drop-shadow-2xl"
+                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-extrabold tracking-tight leading-tight mb-4 drop-shadow-2xl"
               >
                 Building <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 animate-gradient-x">Digital</span> <br />
                 Experiences
@@ -63,7 +63,7 @@ const HUD = ({ activeSection, setActiveSection }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="text-lg md:text-2xl text-slate-300 max-w-2xl mx-auto font-medium"
+                className="text-base sm:text-lg md:text-2xl text-slate-300 max-w-2xl mx-auto font-medium"
               >
                 Welcome to the 3D Portfolio of <span className="text-white font-bold">Alok Kumar</span>
               </motion.p>

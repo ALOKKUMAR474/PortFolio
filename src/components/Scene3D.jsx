@@ -59,30 +59,37 @@ const InteractiveObject = ({ position, rotation, label, sectionKey, activeSectio
 };
 
 const Scene3D = ({ activeSection, setActiveSection }) => {
-  const { camera } = useThree();
+  const { camera, viewport } = useThree();
+  const isMobile = viewport.width < 5;
+
+  // Set the positions dynamically to be tighter on narrow screens
+  const spacing = isMobile ? 1.2 : 2;
 
   // Smooth camera movement based on active section
   useFrame((state, delta) => {
-    let targetPos = new THREE.Vector3(0, 2, 8);
+    // Dynamic base Z position based on viewport to fit all elements
+    const baseZ = isMobile ? 10 : 8;
+    
+    let targetPos = new THREE.Vector3(0, 2, baseZ);
     let targetLookAt = new THREE.Vector3(0, 1, 0);
 
     if (activeSection === 'about') {
-      targetPos.set(-4, 1.5, 3);
-      targetLookAt.set(-4, 1, 0);
+      targetPos.set(-spacing * 2, 1.5, baseZ - 5);
+      targetLookAt.set(-spacing * 2, 1, 0);
     } else if (activeSection === 'skills') {
-      targetPos.set(-2, 1.5, 3);
-      targetLookAt.set(-2, 1, 0);
+      targetPos.set(-spacing, 1.5, baseZ - 5);
+      targetLookAt.set(-spacing, 1, 0);
     } else if (activeSection === 'projects') {
-      targetPos.set(0, 1.5, 3);
+      targetPos.set(0, 1.5, baseZ - 5);
       targetLookAt.set(0, 1, 0);
     } else if (activeSection === 'experience') {
-      targetPos.set(2, 1.5, 3);
-      targetLookAt.set(2, 1, 0);
+      targetPos.set(spacing, 1.5, baseZ - 5);
+      targetLookAt.set(spacing, 1, 0);
     } else if (activeSection === 'resume') {
-      targetPos.set(4, 1.5, 3);
-      targetLookAt.set(4, 1, 0);
+      targetPos.set(spacing * 2, 1.5, baseZ - 5);
+      targetLookAt.set(spacing * 2, 1, 0);
     } else if (activeSection === 'contact') {
-      targetPos.set(0, 4, 5);
+      targetPos.set(0, 4, baseZ - 3);
       targetLookAt.set(0, 2, 0);
     }
 
@@ -109,11 +116,11 @@ const Scene3D = ({ activeSection, setActiveSection }) => {
       </mesh>
 
       {/* Interactive Elements representing sections */}
-      <InteractiveObject type="about" position={[-4, 1, 0]} rotation={[0, 0.2, 0]} label="ABOUT" sectionKey="about" activeSection={activeSection} setActiveSection={setActiveSection} color="#3b82f6" />
-      <InteractiveObject type="skills" position={[-2, 1, 0]} rotation={[0, 0.1, 0]} label="SKILLS" sectionKey="skills" activeSection={activeSection} setActiveSection={setActiveSection} color="#8b5cf6" />
+      <InteractiveObject type="about" position={[-spacing * 2, 1, 0]} rotation={[0, 0.2, 0]} label="ABOUT" sectionKey="about" activeSection={activeSection} setActiveSection={setActiveSection} color="#3b82f6" />
+      <InteractiveObject type="skills" position={[-spacing, 1, 0]} rotation={[0, 0.1, 0]} label="SKILLS" sectionKey="skills" activeSection={activeSection} setActiveSection={setActiveSection} color="#8b5cf6" />
       <InteractiveObject type="projects" position={[0, 1, 0]} rotation={[0, 0, 0]} label="PROJECTS" sectionKey="projects" activeSection={activeSection} setActiveSection={setActiveSection} color="#10b981" />
-      <InteractiveObject type="experience" position={[2, 1, 0]} rotation={[0, -0.1, 0]} label="EXPERIENCE" sectionKey="experience" activeSection={activeSection} setActiveSection={setActiveSection} color="#f97316" />
-      <InteractiveObject type="resume" position={[4, 1, 0]} rotation={[0, -0.2, 0]} label="RESUME" sectionKey="resume" activeSection={activeSection} setActiveSection={setActiveSection} color="#f59e0b" />
+      <InteractiveObject type="experience" position={[spacing, 1, 0]} rotation={[0, -0.1, 0]} label="EXPERIENCE" sectionKey="experience" activeSection={activeSection} setActiveSection={setActiveSection} color="#f97316" />
+      <InteractiveObject type="resume" position={[spacing * 2, 1, 0]} rotation={[0, -0.2, 0]} label="RESUME" sectionKey="resume" activeSection={activeSection} setActiveSection={setActiveSection} color="#f59e0b" />
 
       {/* Center abstract shape for 'Contact' orbiting slightly higher */}
       <Float speed={2} rotationIntensity={2} floatIntensity={3} position={[0, 3.5, -4]}>
