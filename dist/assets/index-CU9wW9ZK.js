@@ -53226,7 +53226,7 @@ const InteractiveObject = ({ position, rotation, label, sectionKey, activeSectio
         castShadow: true,
         children: [
           type === "about" && /* @__PURE__ */ jsxRuntimeExports.jsx("icosahedronGeometry", { args: [1, 0] }),
-          type === "skills" && /* @__PURE__ */ jsxRuntimeExports.jsx("torusKnotGeometry", { args: [0.6, 0.2, 100, 16] }),
+          type === "skills" && /* @__PURE__ */ jsxRuntimeExports.jsx("torusKnotGeometry", { args: [0.6, 0.2, 64, 12] }),
           type === "projects" && /* @__PURE__ */ jsxRuntimeExports.jsx("octahedronGeometry", { args: [1, 0] }),
           type === "experience" && /* @__PURE__ */ jsxRuntimeExports.jsx("dodecahedronGeometry", { args: [1, 0] }),
           type === "resume" && /* @__PURE__ */ jsxRuntimeExports.jsx("coneGeometry", { args: [1, 1.5, 4] }),
@@ -53294,8 +53294,8 @@ const Scene3D = ({ activeSection, setActiveSection }) => {
     /* @__PURE__ */ jsxRuntimeExports.jsx("spotLight", { position: [10, 20, 10], angle: 0.15, penumbra: 1, intensity: 2, castShadow: true, color: "#4338ca" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("spotLight", { position: [-10, 20, -10], angle: 0.15, penumbra: 1, intensity: 2, castShadow: true, color: "#ec4899" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Environment, { preset: "night" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Stars, { radius: 100, depth: 50, count: 5e3, factor: 4, saturation: 0, fade: true, speed: 1 }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { count: 200, scale: 12, size: 2, speed: 0.4, opacity: 0.5, color: "#60a5fa" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Stars, { radius: 100, depth: 50, count: isMobile ? 800 : 2e3, factor: 4, saturation: 0, fade: true, speed: 1 }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { count: isMobile ? 50 : 100, scale: 12, size: isMobile ? 4 : 2, speed: 0.4, opacity: 0.5, color: "#60a5fa" }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("mesh", { rotation: [-Math.PI / 2, 0, 0], position: [0, -1, 0], receiveShadow: true, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("planeGeometry", { args: [100, 100] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("meshStandardMaterial", { color: "#050510", metalness: 0.8, roughness: 0.2 })
@@ -53316,14 +53316,14 @@ const Scene3D = ({ activeSection, setActiveSection }) => {
           onPointerOver: () => document.body.style.cursor = "pointer",
           onPointerOut: () => document.body.style.cursor = "auto",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("sphereGeometry", { args: [1.5, 64, 64] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(MeshDistortMaterial, { color: "#e11d48", attach: "material", distort: 0.6, speed: 3, roughness: 0.1, metalness: 0.9 })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("sphereGeometry", { args: [1.5, 32, 32] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(MeshDistortMaterial, { color: "#e11d48", attach: "material", distort: 0.4, speed: 2, roughness: 0.2, metalness: 0.8 })
           ]
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(Text2, { position: [0, -2.5, 0], fontSize: 0.3, color: "#f43f5e", anchorX: "center", anchorY: "middle", outlineWidth: 0.02, outlineColor: "#000", children: "CONTACT" })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(ContactShadows, { position: [0, -0.99, 0], opacity: 0.6, scale: 40, blur: 2.5, far: 4, color: "#000" })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(ContactShadows, { position: [0, -0.99, 0], opacity: 0.6, scale: 40, blur: 2.5, far: 4, color: "#000", resolution: 256, frames: 1 })
   ] });
 };
 var DefaultContext = {

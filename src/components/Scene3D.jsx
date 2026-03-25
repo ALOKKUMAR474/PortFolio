@@ -26,7 +26,7 @@ const InteractiveObject = ({ position, rotation, label, sectionKey, activeSectio
           castShadow
         >
           {type === 'about' && <icosahedronGeometry args={[1, 0]} />}
-          {type === 'skills' && <torusKnotGeometry args={[0.6, 0.2, 100, 16]} />}
+          {type === 'skills' && <torusKnotGeometry args={[0.6, 0.2, 64, 12]} />}
           {type === 'projects' && <octahedronGeometry args={[1, 0]} />}
           {type === 'experience' && <dodecahedronGeometry args={[1, 0]} />}
           {type === 'resume' && <coneGeometry args={[1, 1.5, 4]} />}
@@ -105,9 +105,9 @@ const Scene3D = ({ activeSection, setActiveSection }) => {
       
       <Environment preset="night" />
 
-      {/* Atmospheric Background */}
-      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-      <Sparkles count={200} scale={12} size={2} speed={0.4} opacity={0.5} color="#60a5fa" />
+      {/* Atmospheric Background - Optimized for mobile */}
+      <Stars radius={100} depth={50} count={isMobile ? 800 : 2000} factor={4} saturation={0} fade speed={1} />
+      <Sparkles count={isMobile ? 50 : 100} scale={12} size={isMobile ? 4 : 2} speed={0.4} opacity={0.5} color="#60a5fa" />
 
       {/* Main floor - Glassy reflective floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow>
@@ -122,20 +122,21 @@ const Scene3D = ({ activeSection, setActiveSection }) => {
       <InteractiveObject type="experience" position={[spacing, 1, 0]} rotation={[0, -0.1, 0]} label="EXPERIENCE" sectionKey="experience" activeSection={activeSection} setActiveSection={setActiveSection} color="#f97316" />
       <InteractiveObject type="resume" position={[spacing * 2, 1, 0]} rotation={[0, -0.2, 0]} label="RESUME" sectionKey="resume" activeSection={activeSection} setActiveSection={setActiveSection} color="#f59e0b" />
 
-      {/* Center abstract shape for 'Contact' orbiting slightly higher */}
+      {/* Center abstract shape for 'Contact' orbiting slightly higher - Optimized geometry */}
       <Float speed={2} rotationIntensity={2} floatIntensity={3} position={[0, 3.5, -4]}>
         <mesh 
           onClick={(e) => { e.stopPropagation(); setActiveSection('contact'); }}
           onPointerOver={() => document.body.style.cursor = 'pointer'}
           onPointerOut={() => document.body.style.cursor = 'auto'}
         >
-          <sphereGeometry args={[1.5, 64, 64]} />
-          <MeshDistortMaterial color="#e11d48" attach="material" distort={0.6} speed={3} roughness={0.1} metalness={0.9} />
+          <sphereGeometry args={[1.5, 32, 32]} />
+          <MeshDistortMaterial color="#e11d48" attach="material" distort={0.4} speed={2} roughness={0.2} metalness={0.8} />
         </mesh>
         <Text position={[0, -2.5, 0]} fontSize={0.3} color="#f43f5e" anchorX="center" anchorY="middle" outlineWidth={0.02} outlineColor="#000">CONTACT</Text>
       </Float>
 
-      <ContactShadows position={[0, -0.99, 0]} opacity={0.6} scale={40} blur={2.5} far={4} color="#000" />
+      {/* Baked Contact Shadows for MASSIVE performance gain */}
+      <ContactShadows position={[0, -0.99, 0]} opacity={0.6} scale={40} blur={2.5} far={4} color="#000" resolution={256} frames={1} />
     </>
   );
 };

@@ -9,9 +9,9 @@ function App() {
   const [activeSection, setActiveSection] = useState('home');
 
   return (
-    <div className="w-full h-screen overflow-hidden bg-slate-950 relative selection:bg-primary/30 selection:text-white text-slate-200">
-      {/* 3D Environment */}
-      <Canvas camera={{ position: [0, 2, 8], fov: 50 }} shadows>
+    <div className="w-full h-[100dvh] overflow-hidden bg-slate-950 relative selection:bg-primary/30 selection:text-white text-slate-200">
+      {/* 3D Environment with optimized DPR for mobile performance */}
+      <Canvas camera={{ position: [0, 2, 8], fov: 50 }} shadows dpr={[1, 2]}>
         <Suspense fallback={null}>
           <Scene3D activeSection={activeSection} setActiveSection={setActiveSection} />
         </Suspense>
