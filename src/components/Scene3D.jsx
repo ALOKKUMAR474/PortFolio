@@ -58,38 +58,37 @@ const InteractiveObject = ({ position, rotation, label, sectionKey, activeSectio
   );
 };
 
-const Scene3D = ({ activeSection, setActiveSection }) => {
-  const { camera, viewport } = useThree();
-  const isMobile = viewport.width < 5;
+const Scene3D = ({ activeSection, setActiveSection, isMobile }) => {
+  const { camera } = useThree();
 
   // Set the positions dynamically to be tighter on narrow screens
-  const spacing = isMobile ? 1.2 : 2;
+  const spacing = isMobile ? 1.1 : 2;
 
   // Smooth camera movement based on active section
   useFrame((state, delta) => {
     // Dynamic base Z position based on viewport to fit all elements
-    const baseZ = isMobile ? 10 : 8;
+    const baseZ = isMobile ? 12 : 8;
     
     let targetPos = new THREE.Vector3(0, 2, baseZ);
     let targetLookAt = new THREE.Vector3(0, 1, 0);
 
     if (activeSection === 'about') {
-      targetPos.set(-spacing * 2, 1.5, baseZ - 5);
+      targetPos.set(-spacing * 2, 1.5, baseZ - 6);
       targetLookAt.set(-spacing * 2, 1, 0);
     } else if (activeSection === 'skills') {
-      targetPos.set(-spacing, 1.5, baseZ - 5);
+      targetPos.set(-spacing, 1.5, baseZ - 6);
       targetLookAt.set(-spacing, 1, 0);
     } else if (activeSection === 'projects') {
-      targetPos.set(0, 1.5, baseZ - 5);
+      targetPos.set(0, 1.5, baseZ - 6);
       targetLookAt.set(0, 1, 0);
     } else if (activeSection === 'experience') {
-      targetPos.set(spacing, 1.5, baseZ - 5);
+      targetPos.set(spacing, 1.5, baseZ - 6);
       targetLookAt.set(spacing, 1, 0);
     } else if (activeSection === 'resume') {
-      targetPos.set(spacing * 2, 1.5, baseZ - 5);
+      targetPos.set(spacing * 2, 1.5, baseZ - 6);
       targetLookAt.set(spacing * 2, 1, 0);
     } else if (activeSection === 'contact') {
-      targetPos.set(0, 4, baseZ - 3);
+      targetPos.set(0, 4, baseZ - 5);
       targetLookAt.set(0, 2, 0);
     }
 
@@ -99,15 +98,15 @@ const Scene3D = ({ activeSection, setActiveSection }) => {
   return (
     <>
       <color attach="background" args={['#030014']} />
-      <ambientLight intensity={0.2} />
+      <ambientLight intensity={0.4} />
       <spotLight position={[10, 20, 10]} angle={0.15} penumbra={1} intensity={2} castShadow color="#4338ca" />
       <spotLight position={[-10, 20, -10]} angle={0.15} penumbra={1} intensity={2} castShadow color="#ec4899" />
       
       <Environment preset="night" />
 
       {/* Atmospheric Background - Optimized for mobile */}
-      <Stars radius={100} depth={50} count={isMobile ? 800 : 2000} factor={4} saturation={0} fade speed={1} />
-      <Sparkles count={isMobile ? 50 : 100} scale={12} size={isMobile ? 4 : 2} speed={0.4} opacity={0.5} color="#60a5fa" />
+      <Stars radius={100} depth={50} count={isMobile ? 500 : 2000} factor={4} saturation={0} fade speed={1} />
+      <Sparkles count={isMobile ? 30 : 100} scale={12} size={isMobile ? 6 : 2} speed={0.4} opacity={0.5} color="#60a5fa" />
 
       {/* Main floor - Glassy reflective floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow>
@@ -129,14 +128,23 @@ const Scene3D = ({ activeSection, setActiveSection }) => {
           onPointerOver={() => document.body.style.cursor = 'pointer'}
           onPointerOut={() => document.body.style.cursor = 'auto'}
         >
-          <sphereGeometry args={[1.5, 32, 32]} />
-          <MeshDistortMaterial color="#e11d48" attach="material" distort={0.4} speed={2} roughness={0.2} metalness={0.8} />
+          <sphereGeometry args={[1.5, isMobile ? 16 : 32, isMobile ? 16 : 32]} />
+          <MeshDistortMaterial color="#e11d48" attach="material" distort={isMobile ? 0 : 0.4} speed={2} roughness={0.2} metalness={0.8} />
         </mesh>
         <Text position={[0, -2.5, 0]} fontSize={0.3} color="#f43f5e" anchorX="center" anchorY="middle" outlineWidth={0.02} outlineColor="#000">CONTACT</Text>
       </Float>
 
       {/* Baked Contact Shadows for MASSIVE performance gain */}
-      <ContactShadows position={[0, -0.99, 0]} opacity={0.6} scale={40} blur={2.5} far={4} color="#000" resolution={256} frames={1} />
+      <ContactShadows 
+        position={[0, -0.99, 0]} 
+        opacity={0.6} 
+        scale={40} 
+        blur={2.5} 
+        far={4} 
+        color="#000" 
+        resolution={isMobile ? 128 : 256} 
+        frames={1} 
+      />
     </>
   );
 };

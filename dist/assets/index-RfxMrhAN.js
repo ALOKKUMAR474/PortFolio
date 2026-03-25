@@ -53259,43 +53259,42 @@ const InteractiveObject = ({ position, rotation, label, sectionKey, activeSectio
     )
   ] }) });
 };
-const Scene3D = ({ activeSection, setActiveSection }) => {
-  const { camera, viewport } = useThree();
-  const isMobile = viewport.width < 5;
-  const spacing = isMobile ? 1.2 : 2;
+const Scene3D = ({ activeSection, setActiveSection, isMobile: isMobile2 }) => {
+  const { camera } = useThree();
+  const spacing = isMobile2 ? 1.1 : 2;
   useFrame((state, delta) => {
-    const baseZ = isMobile ? 10 : 8;
+    const baseZ = isMobile2 ? 12 : 8;
     let targetPos = new Vector3(0, 2, baseZ);
     let targetLookAt = new Vector3(0, 1, 0);
     if (activeSection === "about") {
-      targetPos.set(-spacing * 2, 1.5, baseZ - 5);
+      targetPos.set(-spacing * 2, 1.5, baseZ - 6);
       targetLookAt.set(-spacing * 2, 1, 0);
     } else if (activeSection === "skills") {
-      targetPos.set(-spacing, 1.5, baseZ - 5);
+      targetPos.set(-spacing, 1.5, baseZ - 6);
       targetLookAt.set(-spacing, 1, 0);
     } else if (activeSection === "projects") {
-      targetPos.set(0, 1.5, baseZ - 5);
+      targetPos.set(0, 1.5, baseZ - 6);
       targetLookAt.set(0, 1, 0);
     } else if (activeSection === "experience") {
-      targetPos.set(spacing, 1.5, baseZ - 5);
+      targetPos.set(spacing, 1.5, baseZ - 6);
       targetLookAt.set(spacing, 1, 0);
     } else if (activeSection === "resume") {
-      targetPos.set(spacing * 2, 1.5, baseZ - 5);
+      targetPos.set(spacing * 2, 1.5, baseZ - 6);
       targetLookAt.set(spacing * 2, 1, 0);
     } else if (activeSection === "contact") {
-      targetPos.set(0, 4, baseZ - 3);
+      targetPos.set(0, 4, baseZ - 5);
       targetLookAt.set(0, 2, 0);
     }
     camera.position.lerp(targetPos, delta * 3);
   });
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("color", { attach: "background", args: ["#030014"] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("ambientLight", { intensity: 0.2 }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("ambientLight", { intensity: 0.4 }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("spotLight", { position: [10, 20, 10], angle: 0.15, penumbra: 1, intensity: 2, castShadow: true, color: "#4338ca" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("spotLight", { position: [-10, 20, -10], angle: 0.15, penumbra: 1, intensity: 2, castShadow: true, color: "#ec4899" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Environment, { preset: "night" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Stars, { radius: 100, depth: 50, count: isMobile ? 800 : 2e3, factor: 4, saturation: 0, fade: true, speed: 1 }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { count: isMobile ? 50 : 100, scale: 12, size: isMobile ? 4 : 2, speed: 0.4, opacity: 0.5, color: "#60a5fa" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Stars, { radius: 100, depth: 50, count: isMobile2 ? 500 : 2e3, factor: 4, saturation: 0, fade: true, speed: 1 }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { count: isMobile2 ? 30 : 100, scale: 12, size: isMobile2 ? 6 : 2, speed: 0.4, opacity: 0.5, color: "#60a5fa" }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("mesh", { rotation: [-Math.PI / 2, 0, 0], position: [0, -1, 0], receiveShadow: true, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("planeGeometry", { args: [100, 100] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("meshStandardMaterial", { color: "#050510", metalness: 0.8, roughness: 0.2 })
@@ -53316,14 +53315,26 @@ const Scene3D = ({ activeSection, setActiveSection }) => {
           onPointerOver: () => document.body.style.cursor = "pointer",
           onPointerOut: () => document.body.style.cursor = "auto",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("sphereGeometry", { args: [1.5, 32, 32] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(MeshDistortMaterial, { color: "#e11d48", attach: "material", distort: 0.4, speed: 2, roughness: 0.2, metalness: 0.8 })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("sphereGeometry", { args: [1.5, isMobile2 ? 16 : 32, isMobile2 ? 16 : 32] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(MeshDistortMaterial, { color: "#e11d48", attach: "material", distort: isMobile2 ? 0 : 0.4, speed: 2, roughness: 0.2, metalness: 0.8 })
           ]
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(Text2, { position: [0, -2.5, 0], fontSize: 0.3, color: "#f43f5e", anchorX: "center", anchorY: "middle", outlineWidth: 0.02, outlineColor: "#000", children: "CONTACT" })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(ContactShadows, { position: [0, -0.99, 0], opacity: 0.6, scale: 40, blur: 2.5, far: 4, color: "#000", resolution: 256, frames: 1 })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ContactShadows,
+      {
+        position: [0, -0.99, 0],
+        opacity: 0.6,
+        scale: 40,
+        blur: 2.5,
+        far: 4,
+        color: "#000",
+        resolution: isMobile2 ? 128 : 256,
+        frames: 1
+      }
+    )
   ] });
 };
 var DefaultContext = {
@@ -60797,7 +60808,7 @@ const Navbar = ({ activeSection, setActiveSection }) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "nav",
     {
-      className: `fixed w-full h-20 z-50 transition-all duration-500 pointer-events-auto ${scrolled ? "glass-nav h-16 shadow-2xl shadow-black/50" : "bg-transparent"}`,
+      className: `fixed w-full z-50 transition-all duration-500 pointer-events-auto ${activeSection !== "home" || isMobile ? "glass-nav h-16 shadow-2xl shadow-black/50" : "bg-transparent h-20"}`,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-[1440px] mx-auto flex justify-between items-center w-full h-full px-6 lg:px-12", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -63493,7 +63504,7 @@ const Contact = () => {
     ] })
   ] });
 };
-const HUD = ({ activeSection, setActiveSection }) => {
+const HUD = ({ activeSection, setActiveSection, isMobile: isMobile2 }) => {
   const HUDWrapper = ({ children, sectionTitle }) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
     motion.div,
     {
@@ -63501,7 +63512,7 @@ const HUD = ({ activeSection, setActiveSection }) => {
       animate: { opacity: 1, y: 0, scale: 1 },
       exit: { opacity: 0, y: 20, scale: 0.95 },
       transition: { duration: 0.4, ease: "easeOut" },
-      className: "pointer-events-auto absolute inset-0 sm:inset-10 top-24 sm:top-24 mt-4 glass-card overflow-hidden flex flex-col z-50 rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-2xl shadow-2xl",
+      className: `pointer-events-auto absolute inset-0 sm:inset-10 top-20 sm:top-24 mt-4 glass-card overflow-hidden flex flex-col z-50 rounded-b-none sm:rounded-3xl border border-white/10 shadow-2xl ${isMobile2 ? "bg-slate-900" : "bg-slate-900/80 backdrop-blur-2xl"}`,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between items-center p-4 sm:px-8 border-b border-white/5 bg-white/5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 uppercase", children: sectionTitle }),
@@ -63582,12 +63593,18 @@ const HUD = ({ activeSection, setActiveSection }) => {
 };
 function App() {
   const [activeSection, setActiveSection] = reactExports.useState("home");
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full h-screen overflow-hidden bg-slate-950 relative selection:bg-primary/30 selection:text-white text-slate-200", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Canvas2, { camera: { position: [0, 2, 8], fov: 50 }, shadows: true, children: /* @__PURE__ */ jsxRuntimeExports.jsx(reactExports.Suspense, { fallback: null, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Scene3D, { activeSection, setActiveSection }) }) }),
+  const [isMobile2, setIsMobile] = React$1.useState(window.innerWidth < 768);
+  React$1.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full h-[100dvh] overflow-hidden bg-slate-950 relative selection:bg-primary/30 selection:text-white text-slate-200", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Canvas2, { camera: { position: [0, 2, 8], fov: 50 }, shadows: true, dpr: [1, 2], children: /* @__PURE__ */ jsxRuntimeExports.jsx(reactExports.Suspense, { fallback: null, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Scene3D, { activeSection, setActiveSection, isMobile: isMobile2 }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Loader2, {}),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "absolute inset-0 pointer-events-none z-10 flex flex-col", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Navbar, { activeSection, setActiveSection }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(HUD, { activeSection, setActiveSection })
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Navbar, { activeSection, setActiveSection, isMobile: isMobile2 }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(HUD, { activeSection, setActiveSection, isMobile: isMobile2 })
     ] })
   ] });
 }

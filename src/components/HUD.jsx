@@ -8,7 +8,7 @@ import Experience from './Experience';
 import Resume from './Resume';
 import Contact from './Contact';
 
-const HUD = ({ activeSection, setActiveSection }) => {
+const HUD = ({ activeSection, setActiveSection, isMobile }) => {
   
   // A wrapper to give the Stitch game UI aesthetic and allow exiting back to the 3D 'home'
   const HUDWrapper = ({ children, sectionTitle }) => (
@@ -17,7 +17,9 @@ const HUD = ({ activeSection, setActiveSection }) => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="pointer-events-auto absolute inset-0 sm:inset-10 top-24 sm:top-24 mt-4 glass-card overflow-hidden flex flex-col z-50 rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-2xl shadow-2xl"
+      className={`pointer-events-auto absolute inset-0 sm:inset-10 top-20 sm:top-24 mt-4 glass-card overflow-hidden flex flex-col z-50 rounded-b-none sm:rounded-3xl border border-white/10 shadow-2xl ${
+        isMobile ? 'bg-slate-900' : 'bg-slate-900/80 backdrop-blur-2xl'
+      }`}
     >
       <div className="flex justify-between items-center p-4 sm:px-8 border-b border-white/5 bg-white/5">
         <h2 className="text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 uppercase">

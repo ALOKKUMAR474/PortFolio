@@ -29,8 +29,8 @@ const Navbar = ({ activeSection, setActiveSection }) => {
 
   return (
     <nav 
-      className={`fixed w-full h-20 z-50 transition-all duration-500 pointer-events-auto ${
-        scrolled ? 'glass-nav h-16 shadow-2xl shadow-black/50' : 'bg-transparent'
+      className={`fixed w-full z-50 transition-all duration-500 pointer-events-auto ${
+        activeSection !== 'home' || isMobile ? 'glass-nav h-16 shadow-2xl shadow-black/50' : 'bg-transparent h-20'
       }`}
     >
       <div className='max-w-[1440px] mx-auto flex justify-between items-center w-full h-full px-6 lg:px-12'>

@@ -7,13 +7,20 @@ import HUD from './components/HUD';
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="w-full h-[100dvh] overflow-hidden bg-slate-950 relative selection:bg-primary/30 selection:text-white text-slate-200">
       {/* 3D Environment with optimized DPR for mobile performance */}
       <Canvas camera={{ position: [0, 2, 8], fov: 50 }} shadows dpr={[1, 2]}>
         <Suspense fallback={null}>
-          <Scene3D activeSection={activeSection} setActiveSection={setActiveSection} />
+          <Scene3D activeSection={activeSection} setActiveSection={setActiveSection} isMobile={isMobile} />
         </Suspense>
       </Canvas>
       
@@ -22,8 +29,8 @@ function App() {
       
       {/* Game UI Overlay / HUD */}
       <div className="absolute inset-0 pointer-events-none z-10 flex flex-col">
-        <Navbar activeSection={activeSection} setActiveSection={setActiveSection} />
-        <HUD activeSection={activeSection} setActiveSection={setActiveSection} />
+        <Navbar activeSection={activeSection} setActiveSection={setActiveSection} isMobile={isMobile} />
+        <HUD activeSection={activeSection} setActiveSection={setActiveSection} isMobile={isMobile} />
       </div>
     </div>
   );
