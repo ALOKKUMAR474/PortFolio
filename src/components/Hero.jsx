@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-scroll';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaEnvelope, FaChevronDown } from 'react-icons/fa';
-import Hero3D from './Hero3D';
+import GlobeCanvas from './TechGlobe';
 
 const Hero = () => {
   return (
@@ -138,7 +138,7 @@ const Hero = () => {
                 whileHover={{ scale: 1.05 }}
                 className='relative w-64 h-64 md:w-80 md:h-80 lg:w-[450px] lg:h-[450px] rounded-full overflow-hidden border-4 border-white/10 shadow-[0_0_50px_rgba(99,102,241,0.5)] z-10 bg-black/20 backdrop-blur-sm group-hover:shadow-[0_0_80px_rgba(168,85,247,0.6)] transition-shadow duration-500'
               >
-                <Hero3D />
+                <GlobeCanvas />
               </motion.div>
 
               {/* Decorative Floating Element */}

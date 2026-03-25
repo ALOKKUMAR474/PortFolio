@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-scroll';
 import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import resume from '../assets/resume.pdf';
 
-const Navbar = () => {
+const Navbar = ({ activeSection, setActiveSection }) => {
   const [nav, setNav] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -30,12 +29,13 @@ const Navbar = () => {
 
   return (
     <nav 
-      className={`fixed w-full h-20 z-[100] transition-all duration-500 ${
+      className={`fixed w-full h-20 z-50 transition-all duration-500 pointer-events-auto ${
         scrolled ? 'glass-nav h-16 shadow-2xl shadow-black/50' : 'bg-transparent'
       }`}
     >
       <div className='max-w-[1440px] mx-auto flex justify-between items-center w-full h-full px-6 lg:px-12'>
         <motion.div 
+          onClick={() => setActiveSection('home')}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className='flex items-center gap-2 cursor-pointer'
@@ -59,18 +59,13 @@ const Navbar = () => {
                 transition={{ delay: idx * 0.1 }}
                 className='relative group cursor-pointer'
               >
-                <Link 
-                  to={path} 
-                  smooth={true} 
-                  duration={500} 
-                  spy={true} 
-                  offset={-70}
-                  className='text-sm font-medium text-slate-400 group-hover:text-white transition-colors duration-300'
-                  activeClass='text-white'
+                <div 
+                  onClick={() => setActiveSection(path)}
+                  className={`text-sm font-medium transition-colors duration-300 ${activeSection === path ? 'text-white' : 'text-slate-400 group-hover:text-white'}`}
                 >
                   {title}
-                  <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full' />
-                </Link>
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${activeSection === path ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                </div>
               </motion.li>
             ))}
           </ul>
@@ -112,7 +107,7 @@ const Navbar = () => {
         <motion.div 
           whileTap={{ scale: 0.9 }}
           onClick={toggleNav} 
-          className='md:hidden p-2 text-slate-300 hover:text-white cursor-pointer z-[110]'
+          className='md:hidden p-2 text-slate-300 hover:text-white cursor-pointer z-50 cursor-pointer pointer-events-auto'
         >
           {nav ? <FaTimes size={24} /> : <FaBars size={24} />}
         </motion.div>
@@ -127,14 +122,14 @@ const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={toggleNav}
-              className='fixed inset-0 bg-background/80 backdrop-blur-sm z-[101] md:hidden'
+              className='fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden pointer-events-auto'
             />
             <motion.div 
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className='fixed top-0 right-0 w-[80%] max-w-sm h-full bg-surface z-[105] shadow-2xl md:hidden flex flex-col'
+              className='fixed top-0 right-0 w-[80%] max-w-sm h-full bg-surface z-50 shadow-2xl md:hidden flex flex-col pointer-events-auto'
             >
               <div className='p-8 flex flex-col h-full'>
                 <div className='flex items-center gap-2 mb-12'>
@@ -152,15 +147,12 @@ const Navbar = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
                     >
-                      <Link 
-                        onClick={toggleNav} 
-                        to={path} 
-                        smooth={true} 
-                        duration={500} 
-                        className='text-2xl font-bold text-slate-400 hover:text-primary transition-colors cursor-pointer'
+                      <div 
+                        onClick={() => { setActiveSection(path); toggleNav(); }} 
+                        className={`text-2xl font-bold transition-colors cursor-pointer ${activeSection === path ? 'text-primary' : 'text-slate-400 hover:text-primary'}`}
                       >
                         {title}
-                      </Link>
+                      </div>
                     </motion.li>
                   ))}
                 </ul>
