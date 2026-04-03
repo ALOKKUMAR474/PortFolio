@@ -1,185 +1,119 @@
 import React, { useState, useEffect } from 'react';
-import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import resume from '../assets/resume.pdf';
+import { FiHome, FiUser, FiBarChart2, FiLayers, FiCpu, FiMessageSquare, FiMenu, FiX, FiTerminal, FiFileText } from 'react-icons/fi';
 
-const Navbar = ({ activeSection, setActiveSection, isMobile }) => {
-  const [nav, setNav] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+const navLinks = [
+  { name: 'Home', id: 'home', icon: <FiHome /> },
+  { name: 'About', id: 'about', icon: <FiUser /> },
+  { name: 'Analytics', id: 'dashboard', icon: <FiBarChart2 /> },
+  { name: 'Projects', id: 'projects', icon: <FiLayers /> },
+  { name: 'Resume', id: 'resume', icon: <FiFileText /> },
+  { name: 'Skills', id: 'skills', icon: <FiCpu /> },
+  { name: 'Contact', id: 'contact', icon: <FiMessageSquare /> },
+];
+
+const Navbar = ({ activeSection, setActiveSection }) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleNav = () => setNav(!nav);
-
-  const navLinks = [
-    { title: 'Home', path: 'home' },
-    { title: 'About', path: 'about' },
-    { title: 'Skills', path: 'skills' },
-    { title: 'Projects', path: 'projects' },
-    { title: 'Experience', path: 'experience' },
-    { title: 'Resume', path: 'resume' },
-    { title: 'Contact', path: 'contact' },
-  ];
-
   return (
-    <nav 
-      className={`fixed w-full z-50 transition-all duration-500 pointer-events-auto ${
-        activeSection !== 'home' || isMobile ? 'glass-nav h-16 shadow-2xl shadow-black/50' : 'bg-transparent h-20'
-      }`}
-    >
-      <div className='max-w-[1440px] mx-auto flex justify-between items-center w-full h-full px-6 lg:px-12'>
+    <nav className="fixed top-0 left-0 right-0 z-[100] p-6 pointer-events-none">
+      <div className="container-custom flex justify-between items-center bg-transparent">
+        {/* Logo */}
         <motion.div 
-          onClick={() => setActiveSection('home')}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className='flex items-center gap-2 cursor-pointer'
+          className="pointer-events-auto flex items-center gap-3 glass-premium px-6 py-3 rounded-2xl border border-white/5 shadow-2xl group cursor-pointer"
+          onClick={() => setActiveSection('home')}
         >
-          <div className='w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-display font-extrabold text-xl text-white shadow-lg shadow-primary/30'>
-            A
+          <div className="w-8 h-8 rounded-lg bg-neon-blue flex items-center justify-center text-dark-black font-black text-lg group-hover:scale-110 transition-transform">A</div>
+          <div className="flex flex-col">
+            <span className="text-white font-black text-sm tracking-tighter leading-none group-hover:neon-text-blue transition-all">ALOK_KUMAR</span>
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] leading-none mt-1">SYST_V3.0</span>
           </div>
-          <span className='font-display font-bold text-xl tracking-tight hidden sm:block'>
-            Alok <span className='text-primary'>Kumar</span>
-          </span>
         </motion.div>
-        
-        {/* Desktop Menu */}
-        <div className='hidden md:flex items-center gap-8'>
-          <ul className='flex items-center gap-6'>
-            {navLinks.map(({ title, path }, idx) => (
-              <motion.li 
-                key={path}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className='relative group cursor-pointer'
-              >
-                <div 
-                  onClick={() => setActiveSection(path)}
-                  className={`text-sm font-medium transition-colors duration-300 ${activeSection === path ? 'text-white' : 'text-slate-400 group-hover:text-white'}`}
-                >
-                  {title}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${activeSection === path ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-                </div>
-              </motion.li>
-            ))}
-          </ul>
+
+        {/* Desktop Navigation */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="hidden lg:flex items-center gap-2 pointer-events-auto glass-premium p-2 rounded-2xl border border-white/5"
+        >
+          {navLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => setActiveSection(link.id)}
+              className={`relative px-5 py-2.5 rounded-xl text-sm font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${
+                activeSection === link.id 
+                ? 'text-neon-blue' 
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {activeSection === link.id && (
+                <motion.div 
+                  layoutId="nav-bg"
+                  className="absolute inset-0 bg-neon-blue/10 rounded-xl border border-neon-blue/20"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10">{link.icon}</span>
+              <span className="relative z-10">{link.name}</span>
+            </button>
+          ))}
           
-          <div className='h-6 w-[1px] bg-white/10 mx-2' />
+          <div className="w-[1px] h-6 bg-white/10 mx-2" />
           
-          <div className='flex items-center gap-4'>
-            <motion.a 
-              whileHover={{ scale: 1.1, y: -2 }}
-              href='https://github.com/ALOKKUMAR474' 
-              target='_blank' 
-              rel='noreferrer' 
-              className='text-slate-400 hover:text-white transition-colors'
-            >
-              <FaGithub size={20} />
-            </motion.a>
-            <motion.a 
-              whileHover={{ scale: 1.1, y: -2 }}
-              href='https://linkedin.com/in/alok-kumar-901727291' 
-              target='_blank' 
-              rel='noreferrer' 
-              className='text-slate-400 hover:text-white transition-colors'
-            >
-              <FaLinkedin size={20} />
-            </motion.a>
-            <motion.a 
-              href={resume}
-              download='Alok_Kumar_Resume.pdf'
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className='btn-primary px-5 py-2 text-sm flex items-center gap-2'
-            >
-              Resume
-            </motion.a>
-          </div>
-        </div>
+          <button className="p-2.5 rounded-xl text-gray-400 hover:text-neon-blue transition-all">
+             <FiTerminal size={18} />
+          </button>
+        </motion.div>
 
         {/* Mobile Toggle */}
-        <motion.div 
-          whileTap={{ scale: 0.9 }}
-          onClick={toggleNav} 
-          className='md:hidden p-2 text-slate-300 hover:text-white cursor-pointer z-50 cursor-pointer pointer-events-auto'
+        <motion.button 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden pointer-events-auto p-4 rounded-2xl glass-premium border border-white/5 text-white shadow-2xl"
         >
-          {nav ? <FaTimes size={24} /> : <FaBars size={24} />}
-        </motion.div>
+          {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </motion.button>
       </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
-        {nav && (
-          <>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={toggleNav}
-              className='fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden pointer-events-auto'
-            />
-            <motion.div 
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className='fixed top-0 right-0 w-[80%] max-w-sm h-full bg-surface z-50 shadow-2xl md:hidden flex flex-col pointer-events-auto'
-            >
-              <div className='p-8 flex flex-col h-full'>
-                <div className='flex items-center gap-2 mb-12'>
-                   <div className='w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-display font-extrabold text-xl text-white'>
-                    A
-                  </div>
-                  <span className='font-display font-bold text-xl'>Alok <span className='text-primary'>Kumar</span></span>
-                </div>
-                
-                <ul className='flex flex-col gap-6 flex-grow'>
-                  {navLinks.map(({ title, path }, idx) => (
-                    <motion.li 
-                      key={path}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                    >
-                      <div 
-                        onClick={() => { setActiveSection(path); toggleNav(); }} 
-                        className={`text-2xl font-bold transition-colors cursor-pointer ${activeSection === path ? 'text-primary' : 'text-slate-400 hover:text-primary'}`}
-                      >
-                        {title}
-                      </div>
-                    </motion.li>
-                  ))}
-                </ul>
-                
-                <div className='mt-auto pt-10 border-t border-white/5'>
-                  <p className='text-xs uppercase tracking-widest text-slate-500 mb-6'>Let's Connect</p>
-                  <div className='flex gap-6'>
-                    <a href='https://github.com/ALOKKUMAR474' target='_blank' rel='noreferrer' className='text-slate-400 hover:text-white transition-colors bg-white/5 p-3 rounded-full'>
-                      <FaGithub size={24} />
-                    </a>
-                    <a href='https://linkedin.com/in/alok-kumar-901727291' target='_blank' rel='noreferrer' className='text-slate-400 hover:text-white transition-colors bg-white/5 p-3 rounded-full'>
-                      <FaLinkedin size={24} />
-                    </a>
-                  </div>
-                  <motion.a 
-                    href={resume}
-                    download='Alok_Kumar_Resume.pdf'
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className='btn-primary w-full mt-8 py-4 flex items-center justify-center gap-2 text-lg font-bold'
-                  >
-                    Download Resume
-                  </motion.a>
-                </div>
-              </div>
-            </motion.div>
-          </>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -40 }}
+            className="absolute top-24 left-6 right-6 lg:hidden glass-premium p-6 rounded-3xl border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.8)] pointer-events-auto"
+          >
+            <div className="grid gap-4">
+              {navLinks.map((link) => (
+                <button
+                  key={link.id}
+                  onClick={() => {
+                    setActiveSection(link.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full p-4 rounded-2xl flex items-center gap-4 text-sm font-black uppercase tracking-widest transition-all ${
+                    activeSection === link.id 
+                    ? 'bg-neon-blue/10 text-neon-blue border border-neon-blue/20' 
+                    : 'text-gray-400 hover:text-white bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <span className="text-lg">{link.icon}</span>
+                  {link.name}
+                </button>
+              ))}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </nav>

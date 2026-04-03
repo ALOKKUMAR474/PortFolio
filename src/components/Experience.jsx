@@ -1,121 +1,98 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaBriefcase, FaGraduationCap, FaCertificate } from 'react-icons/fa';
+import { FiBriefcase, FiBookOpen, FiCalendar, FiMapPin } from 'react-icons/fi';
+
+const experience = [
+  {
+    type: "experience",
+    title: "Web Development Trainee",
+    organization: "TCIL-IT Chandigarh",
+    duration: "June 2025 – July 2025",
+    location: "Chandigarh, India",
+    description: "Completed a 6-week intensive MERN stack training. Built full-stack applications using React, Node.js, and MongoDB. Gained hands-on experience with REST APIs and real-world development workflows.",
+    icon: <FiBriefcase className="text-neon-blue" />,
+    color: "neon-blue"
+  },
+  {
+    type: "education",
+    title: "Bachelor of Computer Applications (BCA)",
+    organization: "CGC, Landran",
+    duration: "2023 – 2026 (Expected)",
+    location: "Mohali, Punjab",
+    description: "Pursuing professional degree with a focus on core computer science and modern web technologies. Currently maintaining a CGPA of 7.2.",
+    icon: <FiBookOpen className="text-neon-purple" />,
+    color: "neon-purple"
+  }
+];
+
+const TimelineItem = ({ item, index }) => (
+  <motion.div
+    initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.8, delay: index * 0.2 }}
+    className={`relative flex flex-col md:flex-row items-center justify-between w-full mb-12 md:mb-16 ${
+      index % 2 === 0 ? 'md:flex-row-reverse' : ''
+    }`}
+  >
+    {/* Line connector dot */}
+    <div className="absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-dark-black border-2 border-neon-blue rounded-full z-10 shadow-[0_0_10px_rgba(0,243,255,0.5)] hidden md:block" />
+
+    <div className="w-full md:w-[45%]">
+      <div className="glass-card-futuristic p-6 md:p-8 relative group transition-all hover:border-white/20">
+         <div className={`absolute top-0 ${index % 2 === 0 ? 'md:right-0' : 'md:left-0'} left-0 w-1 md:w-1 h-full bg-${item.color} opacity-20 group-hover:opacity-100 transition-opacity`} />
+         
+         <div className="flex flex-wrap items-center justify-between mb-4 gap-4">
+            <div className="flex items-center gap-3">
+               <div className="p-2 rounded-lg bg-white/5 border border-white/10 group-hover:border-neon-blue/50 transition-colors">
+                  {item.icon}
+               </div>
+               <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-gray-500 italic">{item.type}</span>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] md:text-xs text-neon-blue font-mono">
+               <FiCalendar /> {item.duration}
+            </div>
+         </div>
+
+         <h3 className="text-xl md:text-2xl font-black text-white mb-2 group-hover:neon-text-blue transition-all italic">{item.title}</h3>
+         <p className="text-gray-400 font-bold mb-4 flex flex-wrap items-center gap-2 text-sm md:text-base">
+           {item.organization} <span className="hidden sm:inline w-1 h-1 bg-gray-600 rounded-full" /> <span className="text-[10px] md:text-xs text-gray-500 font-medium flex items-center gap-1"><FiMapPin /> {item.location}</span>
+         </p>
+         
+         <p className="text-gray-500 text-xs md:text-sm leading-relaxed font-medium">
+           {item.description}
+         </p>
+      </div>
+    </div>
+    
+    {/* Spacer for desktop layout */}
+    <div className="hidden md:block w-[45%]" />
+  </motion.div>
+);
 
 const Experience = () => {
-  const experiences = [
-    {
-      title: 'MERN Stack Developer Trainee',
-      company: 'TCIL-IT Chandigarh',
-      period: 'June 2025 – July 2025',
-      description: [
-        'Developed full-stack industrial-grade applications using React, Node, and MongoDB.',
-        'Architected RESTful APIs and optimized database schemas for performance.',
-        'Mastered professional Git workflows and modern frontend standards.',
-        'Pivoted between building intuitive UIs and complex server-side logic.'
-      ],
-      type: 'work',
-      current: true
-    },
-    {
-      title: 'BCA (Pursuing)',
-      company: 'Chandigarh Group of Colleges',
-      period: '2023 – 2026',
-      description: [
-        'Focusing on Computer Fundamentals, Data Structures, and Modern Web Tech.',
-        'Current CGPA: High Standing in technical coursework.',
-        'Active participant in tech seminars and coding competitions.',
-      ],
-      type: 'education',
-      current: false
-    }
-  ];
-
-  const certifications = [
-    { title: 'Web Design for Beginners', provider: 'MindLuster', date: '2024' },
-    { title: 'Python Machine Learning', provider: 'MindLuster', date: '2024' }
-  ];
-
   return (
-    <section id='experience' className='relative min-h-screen bg-transparent'>
-       <div className='absolute top-1/2 right-0 -translate-y-1/2 w-80 h-80 bg-accent-purple/5 blur-[120px] rounded-full -z-10' />
+    <section id="experience" className="py-20 md:py-32 bg-dark-black relative overflow-hidden">
+      {/* Vertical central line */}
+      <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-white/5 -translate-x-1/2 hidden md:block" />
 
-      <div className='max-w-[1440px] mx-auto'>
-         <div className='flex flex-col items-center text-center mb-20 space-y-4'>
-           <span className='text-primary font-bold tracking-[0.2em] uppercase text-sm px-4 py-1 rounded-full bg-primary/10 inline-block'>
-              My Roadmap
-            </span>
-            <h2 className='text-4xl md:text-5xl font-display font-extrabold tracking-tight'>
-              Experience & <span className='text-primary'>Education</span>
+      <div className="container-custom relative z-10">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16 md:mb-24"
+          >
+            <h2 className="text-4xl md:text-7xl font-black text-white uppercase italic tracking-tighter">
+              Pathway <span className="text-neon-gradient">Analysis</span>
             </h2>
-            <div className='w-20 h-1.5 bg-gradient-to-r from-primary to-accent-purple rounded-full' />
-        </div>
-        
-        <div className='relative space-y-12 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/5 before:to-transparent'>
-          {experiences.map((exp, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className='relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group'
-            >
-              {/* Dot */}
-              <div className='flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-surface shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10'>
-                 {exp.type === 'work' ? <FaBriefcase size={14} className='text-primary' /> : <FaGraduationCap size={16} className='text-accent-purple' />}
-              </div>
-              
-              {/* Card */}
-              <div className='w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-card p-6 md:p-8 hover:border-primary/20'>
-                <div className='flex items-center justify-between mb-2'>
-                   <h3 className='text-xl md:text-2xl font-bold font-display text-white'>{exp.title}</h3>
-                   {exp.current && (
-                     <span className='px-2 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded uppercase tracking-widest animate-pulse'>Active</span>
-                   )}
-                </div>
-                <div className='flex flex-wrap items-center gap-2 mb-4'>
-                   <span className='text-sm font-bold text-primary'>{exp.company}</span>
-                   <span className='w-1 h-1 bg-slate-600 rounded-full' />
-                   <span className='text-xs font-medium text-slate-500 uppercase tracking-wider'>{exp.period}</span>
-                </div>
-                <ul className='space-y-3'>
-                  {exp.description.map((item, i) => (
-                    <li key={i} className='flex items-start gap-3 text-slate-400 text-sm leading-relaxed'>
-                       <span className='mt-1.5 w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0' />
-                       {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+            <p className="text-gray-500 font-bold uppercase tracking-[0.4em] mt-4 text-[10px] md:text-sm">Growth & Academic Timeline</p>
+        </motion.div>
 
-        {/* Certifications Grid */}
-        <div className='mt-24'>
-           <div className='flex items-center gap-4 mb-10'>
-              <h3 className='text-2xl font-bold font-display text-white'>Certifications</h3>
-              <div className='flex-grow h-px bg-white/5' />
-           </div>
-           
-           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-             {certifications.map((cert, i) => (
-               <motion.div 
-                  key={i}
-                  whileHover={{ x: 10 }}
-                  className='glass-effect flex items-center gap-6 p-6 rounded-2xl border border-white/5 group transition-all duration-300 hover:bg-white/5'
-               >
-                  <div className='w-14 h-14 rounded-xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300'>
-                    <FaCertificate size={24} />
-                  </div>
-                  <div className='space-y-1'>
-                    <h4 className='font-bold text-white text-lg'>{cert.title}</h4>
-                    <p className='text-sm text-slate-500 font-medium'>{cert.provider} • {cert.date}</p>
-                  </div>
-               </motion.div>
-             ))}
-           </div>
+        <div className="relative">
+          {experience.map((item, index) => (
+            <TimelineItem key={index} item={item} index={index} />
+          ))}
         </div>
       </div>
     </section>

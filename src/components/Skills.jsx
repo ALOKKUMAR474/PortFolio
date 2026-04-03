@@ -1,120 +1,117 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaPython, FaGithub, FaDatabase, FaExternalLinkAlt } from 'react-icons/fa';
-import { SiTailwindcss, SiMongodb, SiExpress, SiVite } from 'react-icons/si';
-import Tilt from 'react-parallax-tilt';
+
+const skills = [
+  {
+    category: "Frontend",
+    items: [
+      { name: "React.js", level: 95 },
+      { name: "JavaScript", level: 90 },
+      { name: "Tailwind CSS", level: 95 },
+      { name: "HTML/CSS", level: 100 },
+    ],
+    color: "neon-blue"
+  },
+  {
+    category: "Backend",
+    items: [
+      { name: "Node.js", level: 85 },
+      { name: "Express.js", level: 85 },
+      { name: "REST APIs", level: 90 },
+    ],
+    color: "neon-purple"
+  },
+  {
+    category: "Database",
+    items: [
+      { name: "MongoDB", level: 90 },
+      { name: "Atlas", level: 85 },
+      { name: "Supabase", level: 80 },
+    ],
+    color: "white"
+  },
+  {
+    category: "Programming",
+    items: [
+      { name: "Python", level: 75 },
+      { name: "Git", level: 95 },
+      { name: "Vite", level: 90 },
+      { name: "Vercel", level: 85 },
+    ],
+    color: "neon-blue"
+  }
+];
+
+const SkillBar = ({ name, level, color }) => (
+  <div className="space-y-1.5 md:space-y-2">
+    <div className="flex justify-between items-center text-[10px] md:text-xs font-black uppercase tracking-widest text-gray-400">
+      <span>{name}</span>
+      <span className={`text-${color} font-mono`}>{level}%</span>
+    </div>
+    <div className="h-1 md:h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+      <motion.div
+        initial={{ width: 0 }}
+        whileInView={{ width: `${level}%` }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.5, ease: "circOut" }}
+        className={`h-full bg-${color} shadow-[0_0_10px_${color}]`}
+      />
+    </div>
+  </div>
+);
 
 const Skills = () => {
-  const categories = [
-    {
-      title: 'Frontend Mastery',
-      skills: [
-        { name: 'HTML5', icon: <FaHtml5 className='text-[#E34F26]' />, level: '95%' },
-        { name: 'CSS3', icon: <FaCss3Alt className='text-[#1572B6]' />, level: '90%' },
-        { name: 'JavaScript', icon: <FaJs className='text-[#F7DF1E]' />, level: '85%' },
-        { name: 'React.js', icon: <FaReact className='text-[#61DAFB]' />, level: '90%' },
-        { name: 'Tailwind CSS', icon: <SiTailwindcss className='text-[#06B6D4]' />, level: '85%' },
-      ]
-    },
-    {
-      title: 'Backend & Databases',
-      skills: [
-        { name: 'Node.js', icon: <FaNodeJs className='text-[#339933]' />, level: '75%' },
-        { name: 'Express.js', icon: <SiExpress className='text-white' />, level: '80%' },
-        { name: 'MongoDB', icon: <SiMongodb className='text-[#47A248]' />, level: '70%' },
-        { name: 'SQL/NoSQL', icon: <FaDatabase className='text-slate-400' />, level: '65%' },
-      ]
-    },
-    {
-      title: 'Tools & Workflow',
-      skills: [
-        { name: 'Git & GitHub', icon: <FaGithub className='text-white' />, level: '85%' },
-        { name: 'Python', icon: <FaPython className='text-[#3776AB]' />, level: '60%' },
-        { name: 'VS Code', icon: <FaExternalLinkAlt className='text-[#007ACC]' />, level: '95%' },
-        { name: 'Vite', icon: <SiVite className='text-[#646CFF]' />, level: '90%' },
-      ]
-    }
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.5 }
-    }
-  };
-
   return (
-    <section id='skills' className='relative min-h-screen flex items-center bg-transparent'>
-      {/* Decorative Blur */}
-      <div className='absolute bottom-0 right-0 w-96 h-96 bg-primary/5 blur-[120px] rounded-full -z-10' />
-      
-      <div className='max-w-[1440px] mx-auto w-full'>
-        <div className='flex flex-col items-center text-center mb-16 space-y-4'>
-           <span className='text-primary font-bold tracking-[0.2em] uppercase text-sm px-4 py-1 rounded-full bg-primary/10 inline-block'>
-              Core Competencies
-            </span>
-            <h2 className='text-4xl md:text-5xl font-display font-extrabold tracking-tight'>
-              Technical <span className='text-primary'>Skillset</span>
-            </h2>
-            <div className='w-20 h-1.5 bg-gradient-to-r from-primary to-accent-purple rounded-full' />
-        </div>
+    <section id="skills" className="py-20 md:py-32 bg-dark-black relative overflow-hidden">
+      {/* Background Decorative */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-neon-purple/5 blur-[100px] md:blur-[160px] rounded-full pointer-events-none" />
 
-        <div className='grid lg:grid-cols-3 gap-8'>
-          {categories.map((category, catIdx) => (
-            <Tilt 
-              key={catIdx}
-              tiltMaxAngleX={5}
-              tiltMaxAngleY={5}
-              perspective={1000}
-              transitionSpeed={1000}
-              scale={1.02}
-              gyroscope={true}
-              className='h-full'
-            >
-            <motion.div 
-              initial='hidden'
-              whileInView='visible'
+      <div className="container-custom relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-12 md:mb-20 text-center"
+        >
+          <h2 className="text-4xl md:text-7xl font-black text-white italic tracking-tighter">
+            TECHNICAL <span className="text-neon-gradient">ARSENAL</span>
+          </h2>
+          <p className="text-gray-500 font-bold uppercase tracking-[0.3em] mt-4 text-[10px] md:text-sm">Developer Proficiency Matrix</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          {skills.map((skillGroup, groupIdx) => (
+            <motion.div
+              key={groupIdx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              variants={containerVariants}
-              className='glass-card p-8 space-y-8 h-full hover:shadow-[0_0_30px_rgba(99,102,241,0.2)] transition-shadow duration-300 hover:border-primary/50'
+              transition={{ delay: groupIdx * 0.1 }}
+              className="glass-card-futuristic p-6 md:p-8 flex flex-col items-center group anti-gravity relative"
+              style={{ animationDelay: `${groupIdx * 0.5}s` }}
             >
-              <h3 className='text-xl font-bold text-white border-b border-white/5 pb-4'>
-                {category.title}
+              <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-16 md:w-20 h-1 bg-${skillGroup.color} opacity-0 group-hover:opacity-100 transition-opacity`} />
+              
+              <h3 className="text-lg md:text-xl font-black text-white mb-6 md:mb-8 text-center uppercase tracking-widest italic group-hover:neon-text-blue transition-all">
+                {skillGroup.category}
               </h3>
-              <div className='space-y-6'>
-                {category.skills.map((skill, idx) => (
-                  <motion.div key={idx} variants={itemVariants} className='space-y-2'>
-                    <div className='flex items-center justify-between'>
-                      <div className='flex items-center gap-3'>
-                        <span className='text-2xl'>{skill.icon}</span>
-                        <span className='font-bold text-slate-300'>{skill.name}</span>
-                      </div>
-                      <span className='text-xs font-bold text-primary'>{skill.level}</span>
-                    </div>
-                    <div className='h-1.5 w-full bg-white/5 rounded-full overflow-hidden'>
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        whileInView={{ width: skill.level }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                        className='h-full bg-gradient-to-r from-primary to-accent-purple rounded-full'
-                      />
-                    </div>
-                  </motion.div>
+              
+              <div className="space-y-4 md:space-y-6 w-full">
+                {skillGroup.items.map((skill, idx) => (
+                  <SkillBar 
+                    key={idx} 
+                    name={skill.name} 
+                    level={skill.level} 
+                    color={skillGroup.color === 'white' ? 'neon-blue' : skillGroup.color} 
+                  />
                 ))}
               </div>
+
+              {/* Interaction Decorator */}
+              <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5 w-full text-center">
+                <span className="text-[8px] md:text-[10px] text-gray-600 font-bold uppercase tracking-widest group-hover:text-neon-blue transition-colors">System Verified</span>
+              </div>
             </motion.div>
-            </Tilt>
           ))}
         </div>
       </div>
